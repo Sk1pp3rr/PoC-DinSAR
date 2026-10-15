@@ -218,3 +218,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project data directories
+data/
+*.SAFE/
+*.SAFE.zip

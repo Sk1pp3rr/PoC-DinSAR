@@ -1,0 +1,30 @@
+<graph id="Graph">
+  <version>1.0</version>
+  <!-- Node 1: Read Filtered Deburst InSAR Product -->
+  <node id="Read-InSAR">
+    <operator>Read</operator>
+    <sources/>
+    <parameters>
+      <file>${sourceFile}</file>
+    </parameters>
+  </node>
+
+  <!-- Node 2: SnaphuExport -->
+  <node id="SnaphuExport">
+    <operator>SnaphuExport</operator>
+    <sources>
+      <sourceProduct refid="Read-InSAR"/>
+    </sources>
+    <parameters>
+      <targetFolder>${targetFolder}</targetFolder>
+      <statCostMode>DEFO</statCostMode>
+      <initMethod>MCF</initMethod>
+      <numberOfTileRows>10</numberOfTileRows>
+      <numberOfTileCols>10</numberOfTileCols>
+      <numberOfProcessors>4</numberOfProcessors>
+      <rowOverlap>200</rowOverlap>
+      <colOverlap>200</colOverlap>
+      <tileCostThreshold>500</tileCostThreshold>
+    </parameters>
+  </node>
+</graph>

@@ -1,0 +1,41 @@
+<graph id="Stage1C_Goldstein_Filter">
+  <version>1.0</version>
+  <!-- Node 1: Read Debursted Interferogram -->
+  <node id="Read-Ifg">
+    <operator>Read</operator>
+    <sources/>
+    <parameters>
+      <file>${sourceFile}</file>
+    </parameters>
+  </node>
+
+  <!-- Node 2: Goldstein Phase Filtering (suppress speckle noise) -->
+  <node id="GoldsteinPhaseFiltering">
+    <operator>GoldsteinPhaseFiltering</operator>
+    <sources>
+      <sourceProduct refid="Read-Ifg"/>
+    </sources>
+    <parameters>
+      <alpha>1.0</alpha>
+      <useAdaptiveAlpha>false</useAdaptiveAlpha>
+      <alphaMin>0.2</alphaMin>
+      <alphaMax>1.0</alphaMax>
+      <FFTSizeString>64</FFTSizeString>
+      <windowSizeString>3</windowSizeString>
+      <useCoherenceMask>false</useCoherenceMask>
+      <coherenceThreshold>0.2</coherenceThreshold>
+    </parameters>
+  </node>
+
+  <!-- Node 3: Write Filtered Interferogram -->
+  <node id="Write">
+    <operator>Write</operator>
+    <sources>
+      <sourceProduct refid="GoldsteinPhaseFiltering"/>
+    </sources>
+    <parameters>
+      <file>${outputFile}</file>
+      <formatName>BEAM-DIMAP</formatName>
+    </parameters>
+  </node>
+</graph>

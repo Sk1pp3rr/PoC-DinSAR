@@ -1,0 +1,106 @@
+<graph id="Stage1A_Coregistration_SingleBurst">
+  <version>1.0</version>
+  <!-- Node 1: Read Master SLC -->
+  <node id="Read-Master">
+    <operator>Read</operator>
+    <sources/>
+    <parameters>
+      <file>${masterFile}</file>
+    </parameters>
+  </node>
+
+  <!-- Node 2: Read Slave SLC -->
+  <node id="Read-Slave">
+    <operator>Read</operator>
+    <sources/>
+    <parameters>
+      <file>${slaveFile}</file>
+    </parameters>
+  </node>
+
+  <!-- Node 3: TOPSAR-Split Master -->
+  <node id="TOPSAR-Split-Master">
+    <operator>TOPSAR-Split</operator>
+    <sources>
+      <sourceProduct refid="Read-Master"/>
+    </sources>
+    <parameters>
+      <subswath>${subswath}</subswath>
+      <selectedPolarisations>${polarisation}</selectedPolarisations>
+      <firstBurstIndex>${firstBurstIndex}</firstBurstIndex>
+      <lastBurstIndex>${lastBurstIndex}</lastBurstIndex>
+      <wktAoi>${wktAoi}</wktAoi>
+    </parameters>
+  </node>
+
+  <!-- Node 4: TOPSAR-Split Slave -->
+  <node id="TOPSAR-Split-Slave">
+    <operator>TOPSAR-Split</operator>
+    <sources>
+      <sourceProduct refid="Read-Slave"/>
+    </sources>
+    <parameters>
+      <subswath>${subswath}</subswath>
+      <selectedPolarisations>${polarisation}</selectedPolarisations>
+      <firstBurstIndex>${firstBurstIndex}</firstBurstIndex>
+      <lastBurstIndex>${lastBurstIndex}</lastBurstIndex>
+      <wktAoi>${wktAoi}</wktAoi>
+    </parameters>
+  </node>
+
+  <!-- Node 5: Apply Precise Orbit Ephemerides to Split Master -->
+  <node id="Apply-Orbit-Master">
+    <operator>Apply-Orbit-File</operator>
+    <sources>
+      <sourceProduct refid="TOPSAR-Split-Master"/>
+    </sources>
+    <parameters>
+      <orbitType>Sentinel Precise (Auto Download)</orbitType>
+      <polyDegree>3</polyDegree>
+      <continueOnFail>true</continueOnFail>
+    </parameters>
+  </node>
+
+  <!-- Node 6: Apply Precise Orbit Ephemerides to Split Slave -->
+  <node id="Apply-Orbit-Slave">
+    <operator>Apply-Orbit-File</operator>
+    <sources>
+      <sourceProduct refid="TOPSAR-Split-Slave"/>
+    </sources>
+    <parameters>
+      <orbitType>Sentinel Precise (Auto Download)</orbitType>
+      <polyDegree>3</polyDegree>
+      <continueOnFail>true</continueOnFail>
+    </parameters>
+  </node>
+
+  <!-- Node 7: Back-Geocoding -->
+  <node id="Back-Geocoding">
+    <operator>Back-Geocoding</operator>
+    <sources>
+      <sourceProduct refid="Apply-Orbit-Master"/>
+      <sourceProduct.1 refid="Apply-Orbit-Slave"/>
+    </sources>
+    <parameters>
+      <demName>${demName}</demName>
+      <demResamplingMethod>BILINEAR_INTERPOLATION</demResamplingMethod>
+      <resamplingType>BILINEAR_INTERPOLATION</resamplingType>
+      <maskOutAreaWithoutElevation>true</maskOutAreaWithoutElevation>
+      <outputRangeAzimuthOffset>false</outputRangeAzimuthOffset>
+      <outputDerampDemodPhase>false</outputDerampDemodPhase>
+      <disableReramp>false</disableReramp>
+    </parameters>
+  </node>
+
+  <!-- Node 8: Write Coregistered Stack -->
+  <node id="Write">
+    <operator>Write</operator>
+    <sources>
+      <sourceProduct refid="Back-Geocoding"/>
+    </sources>
+    <parameters>
+      <file>${outputFile}</file>
+      <formatName>BEAM-DIMAP</formatName>
+    </parameters>
+  </node>
+</graph>

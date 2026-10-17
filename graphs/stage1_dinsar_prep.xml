@@ -108,7 +108,7 @@
       <cohThreshold>0.15</cohThreshold>
       <numBlocksPerOverlap>10</numBlocksPerOverlap>
       <esdEstimator>Periodogram</esdEstimator>
-      <weightFunc>InvCoherence</weightFunc>
+      <weightFunc>Inv Quadratic</weightFunc>
       <temporalBaselineType>Number of images</temporalBaselineType>
       <maxTemporalBaseline>4</maxTemporalBaseline>
       <integrationMethod>L1 and L2</integrationMethod>
